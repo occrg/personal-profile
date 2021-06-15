@@ -10,11 +10,14 @@
       function page_prepping () {
         add_event_listeners()
         let index_exists = document.querySelector('#page-index')
+        let fun_exists = document.querySelector('#page-what-im-up-to-fun')
         if (Boolean(index_exists)) {
           add_surrounding_divs()
           add_container_div_for_left_column()
           handle_icon_links()
           change_contacts_to_clipboard()
+        } else if (Boolean(fun_exists)) {
+          add_spotify_widget()
         }
       }
 
@@ -204,6 +207,21 @@
           navigator.clipboard.writeText(information_to_copy)
         })
         icon_link.replaceChild(replacement_div, anchor)
+      }
+
+      function add_spotify_widget () {
+        let containing_div = document.querySelector('#block-a53ad67525974c57b0a0f6c5e68fdaaf')
+        while (containing_div.firstChild) {
+          containing_div.removeChild(containing_div.lastChild);
+        }
+        let iframe_node = document.createElement('iframe')
+        iframe_node.src="https://open.spotify.com/embed/playlist/5VyPwc801NcpikpOAC3zNZ"
+        iframe_node.width="300"
+        iframe_node.height="380"
+        iframe_node.frameborder="0"
+        iframe_node.allowtransparency="true"
+        iframe_node.allow="encrypted-media"
+        containing_div.appendChild(iframe_node)
       }
     </script>
 
@@ -437,6 +455,12 @@
       }
       .icon-link-group .notion-callout:hover .notion-callout__content {
         display: block;
+      }
+
+      #block-a53ad67525974c57b0a0f6c5e68fdaaf {
+        display: flex;
+        justify-content: center;
+        padding-top: 5px;
       }
 
       @media only screen and (max-width: 1236px) {
