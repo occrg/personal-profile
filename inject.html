@@ -1,0 +1,480 @@
+    <script>
+      window.addEventListener('load', page_loaded)
+      window.addEventListener('resize', add_box_classes)
+      window.addEventListener('popstate', page_loaded)
+
+      function page_loaded (event) {
+        setTimeout(home_page_prep, 100)
+      }
+
+      function home_page_prep () {
+        add_surrounding_divs()
+        add_container_div_for_left_column()
+        handle_icon_links()
+        add_event_listeners()
+        change_contacts_to_clipboard()
+      }
+
+      function add_event_listeners () {
+        let slashes = document.querySelectorAll("a[href='/']")
+        for (let i = 0; i < slashes.length; i++) {
+          slashes[i].addEventListener('click', page_loaded)
+        }
+      }
+
+      function add_container_div_for_left_column () {
+        let index_exists = document.querySelector('#page-index')
+        if (Boolean(index_exists)) {
+          let parent_block = document.querySelector('#block-5177dfd1f8454766b62c57212c63abe8')
+          let new_containing_div = document.createElement('div')
+          new_containing_div.className = 'column-container'
+          while (parent_block.childNodes.length > 0) {
+            new_containing_div.appendChild(parent_block.childNodes[0])
+          }
+          parent_block.appendChild(new_containing_div)
+        }
+      }
+
+      function handle_icon_links () {
+        let index_exists = document.querySelector('#page-index')
+        if (Boolean(index_exists)) {
+          let block = document.querySelector('#block-5177dfd1f8454766b62c57212c63abe8 .column-container')
+          let callouts = block.querySelectorAll('.notion-callout')
+          let new_containing_block = document.createElement('div')
+          new_containing_block.className = 'icon-link-group'
+          for (let i = 0; i < callouts.length; i++) {
+            let callout = callouts[i]
+            let icon_link = callout.cloneNode()
+            let para = callout.querySelector('p')
+            let span = para.querySelector('.notion-semantic-string span')
+            let anchor = span.querySelector('a')
+            span.innerText= anchor.innerText
+            anchor.innerText = ''
+            let icon = callout.querySelector('.notion-callout__icon')
+            anchor.appendChild(icon)
+            icon_link.appendChild(anchor)
+            icon_link.appendChild(para)
+            callout.remove()
+            new_containing_block.appendChild(icon_link)
+          }
+          block.appendChild(new_containing_block)
+        }
+      }
+
+      function add_surrounding_divs () {
+        let index_exists = document.querySelector('#page-index')
+        if (Boolean(index_exists)) {
+          let initial_block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
+          let page_links = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > a')
+          let white_border_container_div_to_clone = document.createElement('div')
+          white_border_container_div_to_clone.className = 'white-border-container'
+          let bottom_left_div = document.createElement('div')
+          bottom_left_div.className = 'bottom-left across'
+          let top_left_div = document.createElement('div')
+          top_left_div.className = 'top-left across'
+          white_border_container_div_to_clone.appendChild(bottom_left_div)
+          white_border_container_div_to_clone.appendChild(top_left_div)
+          let white_filler_end_div_to_clone = document.createElement('div')
+          white_filler_end_div_to_clone.className = 'white-filler end'
+          let white_filler_middle_div_to_clone = document.createElement('div')
+          white_filler_middle_div_to_clone.className = 'white-filler middle'
+          let row_break_div_to_clone = document.createElement('div')
+          row_break_div_to_clone.className = 'row-break'
+          let new_block = initial_block.cloneNode()
+          let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
+          new_block.appendChild(white_filler_end_div)
+          for (let i = 0; i < page_links.length; i++) {
+            let page_box_div = document.createElement('div')
+            page_box_div.className = 'page-box'
+            let white_border_container_div = white_border_container_div_to_clone.cloneNode(true)
+            page_box_div.appendChild(white_border_container_div)
+            page_box_div.appendChild(page_links[i])
+            new_block.appendChild(page_box_div)
+            if (i === page_links.length - 1) {
+              let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
+              let row_break_div = row_break_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_end_div_one)
+              new_block.appendChild(row_break_div)
+              let white_filler_row_div = document.createElement('div')
+              white_filler_row_div.className = 'white-filler-row'
+              new_block.appendChild(white_filler_row_div)
+            } else if (i % 2 === 1) {
+              let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
+              let row_break_div = row_break_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_end_div_one)
+              new_block.appendChild(row_break_div)
+              let white_filler_end_div_two = white_filler_end_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_end_div_two)
+            } else {
+              let white_filler_middle_div_one = white_filler_middle_div_to_clone.cloneNode(true)
+              let white_filler_middle_div_two = white_filler_middle_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_middle_div_one)
+              new_block.appendChild(white_filler_middle_div_two)
+            }
+          }
+          initial_block.replaceWith(new_block)
+          add_box_classes()
+          return true
+        }
+        return false
+      }
+
+      function add_box_classes () {
+        let index_exists = document.querySelector('#page-index')
+        if (Boolean(index_exists)) {
+          let block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
+          let block_row_breaks = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > .row-break')
+          let block_page_boxes = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 .page-box')
+          let current_max_blocks_per_row = Math.floor(block_page_boxes.length / block_row_breaks.length)
+          let width = block.clientWidth
+          if (width > 1240) {
+            if (current_max_blocks_per_row !== 3) {
+              reconstruct_boxes(3)
+            }
+          } else if (width > 620) {
+            if (current_max_blocks_per_row !== 2) {
+              reconstruct_boxes(2)
+            }
+          } else {
+            if (current_max_blocks_per_row !== 1) {
+              reconstruct_boxes(1)
+            }
+          }
+        }
+      }
+
+      function reconstruct_boxes (max_blocks_per_row) {
+        let initial_block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
+        let page_boxes = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > .page-box')
+        let white_filler_end_div_to_clone = document.createElement('div')
+        white_filler_end_div_to_clone.className = 'white-filler end'
+        let white_filler_middle_div_to_clone = document.createElement('div')
+        white_filler_middle_div_to_clone.className = 'white-filler middle'
+        let row_break_div_to_clone = document.createElement('div')
+        row_break_div_to_clone.className = 'row-break'
+        let new_block = initial_block.cloneNode()
+        let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
+        new_block.appendChild(white_filler_end_div)
+        for (let i = 0; i < page_boxes.length; i++) {
+          new_block.appendChild(page_boxes[i])
+          if (i === page_boxes.length - 1) {
+            let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
+            let row_break_div = row_break_div_to_clone.cloneNode(true)
+            new_block.appendChild(white_filler_end_div_one)
+            new_block.appendChild(row_break_div)
+            let white_filler_row_div = document.createElement('div')
+            white_filler_row_div.className = 'white-filler-row'
+            new_block.appendChild(white_filler_row_div)
+          } else if (i % max_blocks_per_row === max_blocks_per_row - 1) {
+            let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
+            let row_break_div = row_break_div_to_clone.cloneNode(true)
+            new_block.appendChild(white_filler_end_div_one)
+            new_block.appendChild(row_break_div)
+            let white_filler_end_div_two = white_filler_end_div_to_clone.cloneNode(true)
+            new_block.appendChild(white_filler_end_div_two)
+          } else {
+            let white_filler_middle_div_one = white_filler_middle_div_to_clone.cloneNode(true)
+            let white_filler_middle_div_two = white_filler_middle_div_to_clone.cloneNode(true)
+            new_block.appendChild(white_filler_middle_div_one)
+            new_block.appendChild(white_filler_middle_div_two)
+          }
+        }
+        initial_block.replaceWith(new_block)
+      }
+
+      function change_contacts_to_clipboard () {
+        let is_mobile_device = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        if (!is_mobile_device) {
+          let icon_link_group = document.querySelector('.icon-link-group')
+          let icon_links = icon_link_group.querySelectorAll('.icon-link-group > div')
+          for (let i = 0; i < icon_links.length; i++) {
+            let icon_link = icon_links[i]
+            let anchor = icon_link.querySelector('a')
+            if (anchor.href.startsWith('mailto:')) {
+              let new_copy = 'Copy my email to clipboard'
+              let information_to_copy = anchor.href.split(':')[1]
+              convert_contact_anchor_to_div(icon_link, anchor, new_copy, information_to_copy)
+            } else if (anchor.href.startsWith('tel:')) {
+              let new_copy = 'Copy my mobile number to clipboard'
+              let information_to_copy = anchor.href.split(':')[1]
+              convert_contact_anchor_to_div(icon_link, anchor, new_copy, information_to_copy)
+            }
+          }
+        }
+      }
+
+      function convert_contact_anchor_to_div (icon_link, anchor, new_copy, information_to_copy) {
+        let replacement_div = document.createElement('div')
+        replacement_div.className = anchor.className
+        while (anchor.childNodes.length > 0) {
+          replacement_div.appendChild(anchor.childNodes[0])
+        }
+        let text = icon_link.querySelector('.notion-semantic-string span')
+        text.innerText = new_copy
+        replacement_div.addEventListener('click', function () {
+          navigator.clipboard.writeText(information_to_copy)
+        })
+        icon_link.replaceChild(replacement_div, anchor)
+      }
+    </script>
+
+
+    <script>
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:2442622,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script><script async="" src="./Home_files/hotjar-2442622.js"></script>
+
+    <style>
+      h3 {
+        font-weight: 200 !important
+      }
+      .notion-navbar {
+        min-height: 45px;
+      }
+      .notion-header__cover.has-cover {
+        background: linear-gradient(#000000, #747373);
+      }
+      .notion-link {
+        cursor: pointer;
+      }
+      #page-index {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        max-height: 100vh;
+      }
+      #page-index > div:nth-child(2) {
+        overflow: hidden;
+      }
+      #page-index .super-content {
+        box-sizing: border-box;
+        max-height: 100%;
+        overflow: hidden;
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 3%;
+        padding-right: 3%;
+      }
+      #page-index .notion-header.page {
+        display: none
+      }
+      #page-index .notion-link.notion-page {
+        width: 100%;
+        height: 100%;
+      }
+      .page-box {
+        width: 400px;
+        height: 400px;
+      }
+      .white-border-container {
+        position: absolute;
+        z-index: 2;
+      }
+      .page-box > .white-border-container {
+        height: inherit;
+        width: inherit;
+      }
+      #block-5177dfd1f8454766b62c57212c63abe8 {
+        position: relative;
+        max-height: 100vh;
+        overflow-y: scroll;
+      }
+      .column-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 50px;
+        overflow-x: visible;
+      }
+      #block-5177dfd1f8454766b62c57212c63abe8 .notion-text {
+        min-height: 0px;
+      }
+      #block-866c40487cf44a36b0e9e8b956d050e5 > .white-border-container {
+        height: 100%;
+        width: 100%;
+      }
+      .white-border-container .down {
+        height: 100%;
+      }
+      .white-border-container .across {
+        width: 100%;
+      }
+      .page-box:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .page-box .notion-page > div {
+        transition: none;
+        background: transparent !important;
+      }
+      .page-box > .white-border-container .down {
+        width: 10px;
+      }
+      .page-box > .white-border-container .across {
+        height: 10px;
+      }
+      #block-866c40487cf44a36b0e9e8b956d050e5 > .white-border-container .down {
+        width: 40px;
+      }
+      #block-866c40487cf44a36b0e9e8b956d050e5 > .white-border-container .across {
+        height: 40px;
+      }
+      .white-border-container > div {
+        background: white;
+        box-sizing: border-box;
+        z-index: 2;
+      }
+      .top-left {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+      }
+      .top-right {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+      }
+      .bottom-left {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+      }
+      #block-95209381182e4601b3d475700be4c1b6 {
+        justify-content: space-between;
+      }
+      #block-866c40487cf44a36b0e9e8b956d050e5 {
+        overflow: scroll;
+        margin-left: 0 !important;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        max-height: 100vh;
+        background-image: url("https://raw.githubusercontent.com/org9711/personal-profile/master/squares_background.svg"), linear-gradient(#000000, #747373);
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      .page-box a {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+        color: white;
+        font-weight: 100px;
+        font-size: 28px;
+        z-index: 3;
+      }
+      #page-index .notion-page__icon {
+        display: none
+      }
+      #page-index .notion-page__title .notion-semantic-string {
+        border-bottom: none
+      }
+      #block-d71f04069f194da1bdba9e618420553b {
+        display: none;
+      }
+      .white-filler {
+        height: auto;
+        background: white;
+      }
+      .white-filler.end {
+        width: 1px;
+        flex-grow: 1;
+      }
+      .white-filler.middle {
+        width: 10px;
+        flex-grow: 0;
+      }
+      .white-filler.none {
+        width: 0px;
+        flex-grow: 0;
+      }
+      .row-break {
+        flex-basis: 100%;
+        height: 0;
+      }
+      .white-filler-row {
+        background: white;
+        flex-basis: 100%;
+        height: 50px;
+      }
+      .icon-link-group {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        max-width: 320px;
+      }
+      .icon-link-group .notion-callout a {
+        height: 100%;
+        width: 100%;
+      }
+      .icon-link-group .notion-callout {
+        padding: 0px;
+        border: 0px solid transparent !important;
+        background-color: transparent;
+        margin-right: 10px;
+      }
+      .icon-link-group .notion-callout .notion-callout__icon {
+        height: 36px;
+        width: 36px;
+        margin-right: 5px;
+      }
+      .icon-link-group .notion-callout .notion-callout__icon div {
+        height: 100% !important;
+        width: 100% !important;
+      }
+      .icon-link-group .notion-callout .notion-callout__content {
+        display: none;
+        width: 160px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 2px;
+        position: absolute;
+        bottom: 110%;
+        left: 10%;
+        font-size: 10pt;
+        z-index: 5;
+      }
+      .icon-link-group .notion-callout:hover .notion-callout__content {
+        display: block;
+      }
+
+      @media only screen and (max-width: 1236px) {
+        .page-box {
+          width: 300px;
+          height: 300px;
+        }
+
+        .page-box a {
+          font-weight: 100px;
+          font-size: 20px;
+        }
+      }
+
+      @media only screen and (max-width: 680px) {
+        #page-index > div:nth-child(2) {
+          overflow: scroll;
+        }
+        #block-5177dfd1f8454766b62c57212c63abe8 {
+          overflow: visible;
+          max-height: none;
+          height: 100%;
+        }
+        #block-866c40487cf44a36b0e9e8b956d050e5 {
+          overflow: visible;
+          max-height: none;
+          height: 100%;
+        }
+      }
+    </style>
