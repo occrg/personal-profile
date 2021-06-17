@@ -1,10 +1,12 @@
     <script>
+      const wait_time = 100
+
       window.addEventListener('load', page_loaded)
       window.addEventListener('resize', add_box_classes)
       window.addEventListener('popstate', page_loaded)
 
       function page_loaded (event) {
-        setTimeout(page_prepping, 100)
+        setTimeout(page_prepping, wait_time)
       }
 
       function page_prepping () {
@@ -12,16 +14,21 @@
         let index_exists = document.querySelector('#page-index')
         let fun_exists = document.querySelector('#page-what-im-up-to-fun')
         if (Boolean(index_exists)) {
+          console.log('running script for home page')
           add_surrounding_divs()
           add_container_div_for_left_column()
           handle_icon_links()
           change_contacts_to_clipboard()
         } else if (Boolean(fun_exists)) {
+          console.log('running script for fun page')
           add_spotify_widget()
+        } else {
+          console.log('no scripts running for this page')
         }
       }
 
       function add_event_listeners () {
+        console.log('adding event listners for page')
         let slashes = document.querySelectorAll("a[href='/']")
         for (let i = 0; i < slashes.length; i++) {
           slashes[i].addEventListener('click', page_loaded)
@@ -61,7 +68,8 @@
         block.appendChild(new_containing_block)
       }
 
-      function add_surrounding_divs () {
+      function add_surrounding_divs (iter) {
+        let iteration = iter || 0
         let initial_block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
         let page_links = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > a')
         let white_border_container_div_to_clone = document.createElement('div')
@@ -79,6 +87,12 @@
         let row_break_div_to_clone = document.createElement('div')
         row_break_div_to_clone.className = 'row-break'
         let new_block = initial_block.cloneNode()
+        if (page_links.length === 0) {
+          setTimeout(() => {
+            add_surrounding_divs(iteration + 1)
+          }, wait_time)
+          return false
+        }
         let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
         new_block.appendChild(white_filler_end_div)
         for (let i = 0; i < page_links.length; i++) {
@@ -112,12 +126,16 @@
         }
         initial_block.replaceWith(new_block)
         add_box_classes()
+        return true
       }
 
       function add_box_classes () {
         let block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
         let block_row_breaks = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > .row-break')
         let block_page_boxes = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 .page-box')
+        if (block_page_boxes.length === 0) {
+          return false
+        }
         let current_max_blocks_per_row = Math.floor(block_page_boxes.length / block_row_breaks.length)
         let width = block.clientWidth
         if (width > 1240) {
