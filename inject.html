@@ -1,5 +1,5 @@
     <script>
-      const wait_time = 100
+      const wait_time = 200
 
       window.addEventListener('load', page_loaded)
       window.addEventListener('resize', add_box_classes)
@@ -29,7 +29,7 @@
 
       function add_event_listeners () {
         console.log('adding event listners for page')
-        let slashes = document.querySelectorAll("a[href='/']")
+        let slashes = document.querySelectorAll("a.notion-link")
         for (let i = 0; i < slashes.length; i++) {
           slashes[i].addEventListener('click', page_loaded)
         }
