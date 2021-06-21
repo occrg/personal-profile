@@ -1,5 +1,5 @@
     <script>
-      const wait_time = 100
+      const wait_time = 300
 
       window.addEventListener('load', page_loaded)
       window.addEventListener('resize', add_box_classes)
@@ -11,6 +11,7 @@
 
       function page_prepping () {
         add_event_listeners()
+        set_periodic_functions()
         let index_exists = document.querySelector('#page-index')
         let fun_exists = document.querySelector('#page-what-im-up-to-fun')
         if (Boolean(index_exists)) {
@@ -24,6 +25,21 @@
           add_spotify_widget()
         } else {
           console.log('no scripts running for this page')
+        }
+      }
+
+      function set_periodic_functions () {
+        setInterval(function () {
+          add_hide_after_callout_class()
+        }, 10)
+      }
+
+      function add_hide_after_callout_class () {
+        let page_container = document.querySelector('#__next div')
+        if (page_container.id.includes('application-tracker')) {
+          page_container.classList.add('hide-after-callout')
+        } else {
+          page_container.classList.remove('hide-after-callout')
         }
       }
 
@@ -448,6 +464,10 @@
       }
       #page-index .notion-page__icon {
         color: #f6f6f6
+      }
+
+      .hide-after-callout .notion-callout ~ * {
+        display: none;
       }
 
       @media only screen and (max-width: 1236px) {
