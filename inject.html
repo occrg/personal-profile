@@ -88,7 +88,17 @@
         let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
         new_block.appendChild(white_filler_end_div)
         for (let i = 0; i < page_links.length; i++) {
-          new_block.appendChild(page_links[i])
+          let page_link = page_links[i]
+          let subject_div = page_link.nextElementSibling
+          let preview_content_div = document.createElement('div')
+          preview_content_div.className = 'preview-content-container'
+          while (subject_div && subject_div.tagName !== 'a') {
+            let next_div = subject_div.nextElementSibling
+            preview_content_div.appendChild(subject_div)
+            subject_div = next_div
+          }
+          page_link.appendChild(preview_content_div)
+          new_block.appendChild(page_link)
           if (i === page_links.length - 1) {
             let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
             let row_break_div = row_break_div_to_clone.cloneNode(true)
@@ -123,7 +133,7 @@
         if (block_page_boxes.length === 0) {
           return false
         }
-        let current_max_blocks_per_row = Math.floor(block_page_boxes.length / block_row_breaks.length)
+        let current_max_blocks_per_row = Math.ceil(block_page_boxes.length / block_row_breaks.length)
         let width = block.clientWidth
         if (width > 1240) {
           if (current_max_blocks_per_row !== 3) {
@@ -141,6 +151,7 @@
       }
 
       function reconstruct_boxes (max_blocks_per_row) {
+        console.log('reconstruct', max_blocks_per_row)
         let initial_block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
         let page_boxes = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 a')
         let white_filler_end_div_to_clone = document.createElement('div')
@@ -294,8 +305,8 @@
       #block-866c40487cf44a36b0e9e8b956d050e5 a {
         position: relative;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 20px;
+        flex-direction: column;
         color: white;
         font-weight: 100px;
         font-size: 28px;
@@ -307,27 +318,21 @@
         border-top: 10px solid white;
         border-bottom: 10px solid white;
       }
+      #block-866c40487cf44a36b0e9e8b956d050e5 a .preview-content-container {
+        display: flex;
+        flex-direction: column;
+        font-size: 18px;
+      }
       #block-866c40487cf44a36b0e9e8b956d050e5 a:hover {
         background: rgba(255, 255, 255, 0.3);
       }
       #block-866c40487cf44a36b0e9e8b956d050e5 a > div {
         transition: none;
         background: transparent !important;
+        line-height: normal;
       }
-      .top-left {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-      }
-      .top-right {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-      }
-      .bottom-left {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
+      #block-866c40487cf44a36b0e9e8b956d050e5 a .notion-page__title .notion-semantic-string span {
+        white-space: pre-wrap;
       }
       #block-95209381182e4601b3d475700be4c1b6 {
         justify-content: space-between;
@@ -338,15 +343,13 @@
         padding-top: 0px;
         padding-bottom: 0px;
         max-height: 100vh;
+        height: 100%;
         background-image: url("https://raw.githubusercontent.com/org9711/personal-profile/master/squares_background.svg"), linear-gradient(#000000, #747373);
         position: relative;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-around;
-      }
-      #page-index .notion-page__icon {
-        display: none
       }
       #page-index .notion-page__title .notion-semantic-string {
         border-bottom: none
@@ -437,6 +440,10 @@
           height: 300px;
           font-weight: 100px;
           font-size: 20px;
+          padding: 10px;
+        }
+        #block-866c40487cf44a36b0e9e8b956d050e5 a .preview-content-container {
+          font-size: 14px
         }
       }
 
