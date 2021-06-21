@@ -1,5 +1,5 @@
     <script>
-      const wait_time = 200
+      const wait_time = 300
 
       window.addEventListener('load', page_loaded)
       window.addEventListener('resize', add_box_classes)
@@ -56,7 +56,7 @@
           let para = callout.querySelector('p')
           let span = para.querySelector('.notion-semantic-string span')
           let anchor = span.querySelector('a')
-          span.innerText= anchor.innerText
+          span.innerText = anchor.innerText
           anchor.innerText = ''
           let icon = callout.querySelector('.notion-callout__icon')
           anchor.appendChild(icon)
