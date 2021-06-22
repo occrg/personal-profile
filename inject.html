@@ -86,12 +86,6 @@
           let row_break_div_to_clone = document.createElement('div')
           row_break_div_to_clone.className = 'row-break'
           let new_block = initial_block.cloneNode()
-          if (page_links.length === 0) {
-            setTimeout(() => {
-              add_surrounding_divs(iteration + 1)
-            }, wait_time)
-            return false
-          }
           let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
           new_block.appendChild(white_filler_end_div)
           for (let i = 0; i < page_links.length; i++) {
@@ -139,7 +133,8 @@
         let block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
         let block_row_breaks = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > .row-break')
         let block_page_boxes = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > a')
-        if (block_page_boxes.length === 0) {
+        let div_exists = block.querySelector('.white-filler')
+        if (!div_exists) {
           return false
         }
         let current_max_blocks_per_row = Math.ceil(block_page_boxes.length / block_row_breaks.length)
@@ -160,7 +155,6 @@
       }
 
       function reconstruct_boxes (max_blocks_per_row) {
-        console.log('reconstruct', max_blocks_per_row)
         let initial_block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
         let page_boxes = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 a')
         let white_filler_end_div_to_clone = document.createElement('div')
