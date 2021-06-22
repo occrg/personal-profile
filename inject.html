@@ -1,37 +1,22 @@
     <script>
-      const wait_time = 300
+      let refresh_time = 50
 
-      window.addEventListener('load', page_loaded)
+      window.addEventListener('load', set_periodic_functions)
       window.addEventListener('resize', add_box_classes)
-      window.addEventListener('popstate', page_loaded)
-
-      function page_loaded (event) {
-        setTimeout(page_prepping, wait_time)
-      }
-
-      function page_prepping () {
-        add_event_listeners()
-        set_periodic_functions()
-        let index_exists = document.querySelector('#page-index')
-        let fun_exists = document.querySelector('#page-what-im-up-to-fun')
-        if (Boolean(index_exists)) {
-          console.log('running script for home page')
-          add_surrounding_divs()
-          add_container_div_for_left_column()
-          handle_icon_links()
-          change_contacts_to_clipboard()
-        } else if (Boolean(fun_exists)) {
-          console.log('running script for fun page')
-          add_spotify_widget()
-        } else {
-          console.log('no scripts running for this page')
-        }
-      }
 
       function set_periodic_functions () {
         setInterval(function () {
           add_hide_after_callout_class()
-        }, 10)
+          let index_exists = document.querySelector('#page-index')
+          let fun_exists = document.querySelector('#page-what-im-up-to-fun')
+          if (Boolean(index_exists)) {
+            add_surrounding_divs()
+            add_container_div_for_left_column()
+            handle_icon_links()
+          } else if (Boolean(fun_exists)) {
+            add_spotify_widget()
+          }
+        }, refresh_time)
       }
 
       function add_hide_after_callout_class () {
@@ -43,104 +28,111 @@
         }
       }
 
-      function add_event_listeners () {
-        console.log('adding event listners for page')
-        let slashes = document.querySelectorAll("a.notion-link")
-        for (let i = 0; i < slashes.length; i++) {
-          slashes[i].addEventListener('click', page_loaded)
-        }
-      }
-
       function add_container_div_for_left_column () {
         let parent_block = document.querySelector('#block-5177dfd1f8454766b62c57212c63abe8')
-        let new_containing_div = document.createElement('div')
-        new_containing_div.className = 'column-container'
-        while (parent_block.childNodes.length > 0) {
-          new_containing_div.appendChild(parent_block.childNodes[0])
+        let div_exists = parent_block.querySelector('.column-container')
+        if (!div_exists) {
+          console.log('running add container div for left column on home page script')
+          let new_containing_div = document.createElement('div')
+          new_containing_div.className = 'column-container'
+          while (parent_block.childNodes.length > 0) {
+            new_containing_div.appendChild(parent_block.childNodes[0])
+          }
+          parent_block.appendChild(new_containing_div)
         }
-        parent_block.appendChild(new_containing_div)
       }
 
       function handle_icon_links () {
         let block = document.querySelector('#block-5177dfd1f8454766b62c57212c63abe8 .column-container')
-        let callouts = block.querySelectorAll('.notion-callout')
-        let new_containing_block = document.createElement('div')
-        new_containing_block.className = 'icon-link-group'
-        for (let i = 0; i < callouts.length; i++) {
-          let callout = callouts[i]
-          let icon_link = callout.cloneNode()
-          let para = callout.querySelector('p')
-          let span = para.querySelector('.notion-semantic-string span')
-          let anchor = span.querySelector('a')
-          span.innerText = anchor.innerText
-          anchor.innerText = ''
-          let icon = callout.querySelector('.notion-callout__icon')
-          anchor.appendChild(icon)
-          icon_link.appendChild(anchor)
-          icon_link.appendChild(para)
-          callout.remove()
-          new_containing_block.appendChild(icon_link)
+        if (block) {
+          let div_exists = block.querySelector('.icon-link-group')
+          if (!div_exists) {
+            console.log('running handle icon link group on home page script')
+            let callouts = block.querySelectorAll('.notion-callout')
+            let new_containing_block = document.createElement('div')
+            new_containing_block.className = 'icon-link-group'
+            for (let i = 0; i < callouts.length; i++) {
+              let callout = callouts[i]
+              let icon_link = callout.cloneNode()
+              let para = callout.querySelector('p')
+              let span = para.querySelector('.notion-semantic-string span')
+              let anchor = span.querySelector('a')
+              span.innerText = anchor.innerText
+              anchor.innerText = ''
+              let icon = callout.querySelector('.notion-callout__icon')
+              anchor.appendChild(icon)
+              icon_link.appendChild(anchor)
+              icon_link.appendChild(para)
+              callout.remove()
+              new_containing_block.appendChild(icon_link)
+            }
+            block.appendChild(new_containing_block)
+            change_contacts_to_clipboard()
+          }
         }
-        block.appendChild(new_containing_block)
       }
 
       function add_surrounding_divs (iter) {
         let iteration = iter || 0
         let initial_block = document.querySelector('#block-866c40487cf44a36b0e9e8b956d050e5')
         let page_links = document.querySelectorAll('#block-866c40487cf44a36b0e9e8b956d050e5 > a')
-        let white_filler_end_div_to_clone = document.createElement('div')
-        white_filler_end_div_to_clone.className = 'white-filler end'
-        let white_filler_middle_div_to_clone = document.createElement('div')
-        white_filler_middle_div_to_clone.className = 'white-filler middle'
-        let row_break_div_to_clone = document.createElement('div')
-        row_break_div_to_clone.className = 'row-break'
-        let new_block = initial_block.cloneNode()
-        if (page_links.length === 0) {
-          setTimeout(() => {
-            add_surrounding_divs(iteration + 1)
-          }, wait_time)
-          return false
-        }
-        let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
-        new_block.appendChild(white_filler_end_div)
-        for (let i = 0; i < page_links.length; i++) {
-          let page_link = page_links[i]
-          let subject_div = page_link.nextElementSibling
-          let preview_content_div = document.createElement('div')
-          preview_content_div.className = 'preview-content-container'
-          while (subject_div && subject_div.tagName !== 'a') {
-            let next_div = subject_div.nextElementSibling
-            preview_content_div.appendChild(subject_div)
-            subject_div = next_div
+        let div_exists = initial_block.querySelector('.white-filler')
+        if (page_links.length !== 0 && !div_exists) {
+          console.log('running add surrounding divs on home page script')
+          let white_filler_end_div_to_clone = document.createElement('div')
+          white_filler_end_div_to_clone.className = 'white-filler end'
+          let white_filler_middle_div_to_clone = document.createElement('div')
+          white_filler_middle_div_to_clone.className = 'white-filler middle'
+          let row_break_div_to_clone = document.createElement('div')
+          row_break_div_to_clone.className = 'row-break'
+          let new_block = initial_block.cloneNode()
+          if (page_links.length === 0) {
+            setTimeout(() => {
+              add_surrounding_divs(iteration + 1)
+            }, wait_time)
+            return false
           }
-          page_link.appendChild(preview_content_div)
-          new_block.appendChild(page_link)
-          if (i === page_links.length - 1) {
-            let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
-            let row_break_div = row_break_div_to_clone.cloneNode(true)
-            new_block.appendChild(white_filler_end_div_one)
-            new_block.appendChild(row_break_div)
-            let white_filler_row_div = document.createElement('div')
-            white_filler_row_div.className = 'white-filler-row'
-            new_block.appendChild(white_filler_row_div)
-          } else if (i % 2 === 1) {
-            let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
-            let row_break_div = row_break_div_to_clone.cloneNode(true)
-            new_block.appendChild(white_filler_end_div_one)
-            new_block.appendChild(row_break_div)
-            let white_filler_end_div_two = white_filler_end_div_to_clone.cloneNode(true)
-            new_block.appendChild(white_filler_end_div_two)
-          } else {
-            let white_filler_middle_div_one = white_filler_middle_div_to_clone.cloneNode(true)
-            let white_filler_middle_div_two = white_filler_middle_div_to_clone.cloneNode(true)
-            new_block.appendChild(white_filler_middle_div_one)
-            new_block.appendChild(white_filler_middle_div_two)
+          let white_filler_end_div = white_filler_end_div_to_clone.cloneNode(true)
+          new_block.appendChild(white_filler_end_div)
+          for (let i = 0; i < page_links.length; i++) {
+            let page_link = page_links[i]
+            let subject_div = page_link.nextElementSibling
+            let preview_content_div = document.createElement('div')
+            preview_content_div.className = 'preview-content-container'
+            while (subject_div && subject_div.tagName !== 'a') {
+              let next_div = subject_div.nextElementSibling
+              preview_content_div.appendChild(subject_div)
+              subject_div = next_div
+            }
+            page_link.appendChild(preview_content_div)
+            new_block.appendChild(page_link)
+            if (i === page_links.length - 1) {
+              let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
+              let row_break_div = row_break_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_end_div_one)
+              new_block.appendChild(row_break_div)
+              let white_filler_row_div = document.createElement('div')
+              white_filler_row_div.className = 'white-filler-row'
+              new_block.appendChild(white_filler_row_div)
+            } else if (i % 2 === 1) {
+              let white_filler_end_div_one = white_filler_end_div_to_clone.cloneNode(true)
+              let row_break_div = row_break_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_end_div_one)
+              new_block.appendChild(row_break_div)
+              let white_filler_end_div_two = white_filler_end_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_end_div_two)
+            } else {
+              let white_filler_middle_div_one = white_filler_middle_div_to_clone.cloneNode(true)
+              let white_filler_middle_div_two = white_filler_middle_div_to_clone.cloneNode(true)
+              new_block.appendChild(white_filler_middle_div_one)
+              new_block.appendChild(white_filler_middle_div_two)
+            }
           }
+          initial_block.replaceWith(new_block)
+          remove_column_widths()
+          add_box_classes()
+          return true
         }
-        initial_block.replaceWith(new_block)
-        remove_column_widths()
-        add_box_classes()
-        return true
       }
 
       function add_box_classes () {
@@ -251,17 +243,21 @@
 
       function add_spotify_widget () {
         let containing_div = document.querySelector('#block-a53ad67525974c57b0a0f6c5e68fdaaf')
-        while (containing_div.firstChild) {
-          containing_div.removeChild(containing_div.lastChild);
+        let iframe_exists = containing_div.querySelector('iframe')
+        if (!iframe_exists) {
+          console.log('running add spotify widget on fun page script')
+          while (containing_div.firstChild) {
+            containing_div.removeChild(containing_div.lastChild);
+          }
+          let iframe_node = document.createElement('iframe')
+          iframe_node.src="https://open.spotify.com/embed/playlist/5VyPwc801NcpikpOAC3zNZ"
+          iframe_node.width="300"
+          iframe_node.height="380"
+          iframe_node.frameborder="0"
+          iframe_node.allowtransparency="true"
+          iframe_node.allow="encrypted-media"
+          containing_div.appendChild(iframe_node)
         }
-        let iframe_node = document.createElement('iframe')
-        iframe_node.src="https://open.spotify.com/embed/playlist/5VyPwc801NcpikpOAC3zNZ"
-        iframe_node.width="300"
-        iframe_node.height="380"
-        iframe_node.frameborder="0"
-        iframe_node.allowtransparency="true"
-        iframe_node.allow="encrypted-media"
-        containing_div.appendChild(iframe_node)
       }
     </script>
 
